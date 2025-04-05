@@ -1,0 +1,9 @@
+pandas
+setuptools
+numpy
+scikit-learn
+matplotlib
+folium
+xgboost
+seaborn
+#-e .
