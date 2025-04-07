@@ -6,4 +6,9 @@ matplotlib
 folium
 xgboost
 seaborn
+pymongo
+certifi
+dnspython
+python-dotenv
+
 #-e .
