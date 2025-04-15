@@ -36,12 +36,13 @@ class DataIngestion :
             collection= self.mongo_client[database_name][collection_name]
             logging.info(f"Collection {collection_name} from database {database_name} is connected")
 
-            logging.info(f"Exporting collection {collection_name} from database {database_name} as dataframe")
+            logging.info(f"Exported collection {collection_name} from database {database_name} as dataframe")
 
             df = pd.DataFrame(list(collection.find()))
+            df = df.replace(9,np.nan)
+            if '_id' in df.columns:
+                df.drop(columns=['_id'], axis=1,inplace=True)
 
-            if "exactPrice" in df.columns.to_list():
-                df= df.drop(columns=["exactPrice"],axis=1)
 
             logging.info(f"Exported collection {collection_name} from database {database_name} as dataframe")
 
