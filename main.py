@@ -1,13 +1,17 @@
 from houseprediction.components.data_ingestion import DataIngestion
 
-from houseprediction.entity.config_entity import TrainingPipelineConfig, DataingestionConfig, DataTransformationConfig
+from houseprediction.entity.config_entity import (TrainingPipelineConfig,
+                                                   DataingestionConfig,
+                                                   DataTransformationConfig)
 from houseprediction.logging.logger import logging
 from houseprediction.exceptation.exceptation import housepredException
 import os
 
 from houseprediction.components.data_transformation import DataTransformation
 
-from houseprediction.entity.artifact_entity import DataIngestionArtifact, DataTransformationArtifact
+from houseprediction.entity.artifact_entity import (DataIngestionArtifact,
+                                                     DataTransformationArtifact,
+                                                     ModelTrainerArtifact)
 import sys
 
 
