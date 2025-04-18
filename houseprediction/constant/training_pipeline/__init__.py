@@ -27,6 +27,7 @@ DATA_INGESTION_TRAIN_TEST_SPLIT_RATION: float = 0.2
 
 
 
+
 """defining conatant variable for the data transformation"""
 DATA_TRANSFORMATION_DIR_NAME: str = "data_transformation"
 DATA_TRANSFORMATION_TRANSFORMED_DATA_DIR: str = "transformed"

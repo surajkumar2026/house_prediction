@@ -2,7 +2,8 @@ from houseprediction.components.data_ingestion import DataIngestion
 
 from houseprediction.entity.config_entity import (TrainingPipelineConfig,
                                                    DataingestionConfig,
-                                                   DataTransformationConfig)
+                                                   DataTransformationConfig,
+                                                   ModelTrainerConfig,)
 from houseprediction.logging.logger import logging
 from houseprediction.exceptation.exceptation import housepredException
 import os
@@ -13,6 +14,8 @@ from houseprediction.entity.artifact_entity import (DataIngestionArtifact,
                                                      DataTransformationArtifact,
                                                      ModelTrainerArtifact)
 import sys
+
+from houseprediction.components.model_trainer import ModelTrainer   
 
 
 if __name__ == "__main__":
@@ -30,5 +33,9 @@ if __name__ == "__main__":
     logging.info("Data transformation completed")
     print(data_transformation_artifact)
 
-
+    datamodeltrainerconfig = ModelTrainerConfig(trainingpipelineconfig)
+    datamodeltrainer       = ModelTrainer(datamodeltrainerconfig, data_transformation_artifact)
+    model_trainer_artifact = datamodeltrainer.initiate_model_trainer()
+    logging.info("Model training completed")
+    print(model_trainer_artifact)
 

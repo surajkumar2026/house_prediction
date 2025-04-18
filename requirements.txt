@@ -10,5 +10,7 @@ pymongo
 certifi
 dnspython
 python-dotenv
+mlflow
+
 
 #-e .

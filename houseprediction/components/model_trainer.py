@@ -26,11 +26,34 @@ from sklearn.ensemble import(
     ExtraTreesRegressor
 )
 
+import mlflow
+
 class ModelTrainer:
     def __init__(self, model_trainer_config:ModelTrainerConfig, data_tarnsformation_artifact:DataTransformationArtifact):
         try:
             self.model_trainer_config = model_trainer_config
             self.data_transformation_artifact = data_tarnsformation_artifact
+        except Exception as e:
+            raise housepredException(e, sys)
+
+
+
+
+    def track_mlflow(self, best_model, regressionmetrics):
+        try:
+            with mlflow.start_run():
+                r2_score = regressionmetrics.r2_score
+                mse = regressionmetrics.MSE
+                rmse = regressionmetrics.RMSE
+                mae = regressionmetrics.MAE
+
+                mlflow.log_metric("r2_score", r2_score)
+                mlflow.log_metric("mse", mse)
+                mlflow.log_metric("rmse", rmse)
+                mlflow.log_metric("mae", mae)
+
+                mlflow.sklearn.log_model(best_model, "model")
+          
         except Exception as e:
             raise housepredException(e, sys)
         
@@ -49,35 +72,45 @@ class ModelTrainer:
 
 
             params= {
+
+                "LinearRegression": {
+                    #'copy_X', 'fit_intercept', 'n_jobs', 'positive'
+                    'fit_intercept': [True],
+                    'copy_X': [True],
+                    'n_jobs': [None],
+                    'positive': [False]
+                    
+                },
+                
                 "DecisionTreeRegressor": {
-                    "max_depth": 10,
-                    "min_samples_split": 5,
-                    "min_samples_leaf": 2
+                    "max_depth": [10],
+                    "min_samples_split": [5],
+                    "min_samples_leaf": [2]
                 },
                 "RandomForestRegressor": {
-                    "n_estimators": 100,
-                    "max_depth": 10,
-                    "min_samples_split": 5,
-                    "min_samples_leaf": 2
+                    "n_estimators": [100],
+                    "max_depth": [10],
+                    "min_samples_split": [5],
+                    "min_samples_leaf": [2]
                 },
                 "GradientBoostingRegressor": {
-                    "n_estimators": 100,
-                    "learning_rate": 0.1,
-                    "max_depth": 3,
-                    "min_samples_split": 2,
-                    "min_samples_leaf": 1
+                    "n_estimators": [100],
+                    "learning_rate": [0.],
+                    "max_depth": [3],
+                    "min_samples_split": [2],
+                    "min_samples_leaf": [1]
                 },
                 "XGBRegressor": {
-                    "n_estimators": 100,
-                    "learning_rate": 0.1,
-                    "max_depth": 3,
-                    "min_child_weight": 1
+                    "n_estimators": [100],
+                    "learning_rate": [0.1],
+                    "max_depth": [3],
+                    "min_child_weight": [1]
                 },
                 "ExtraTreesRegressor": {
-                    "n_estimators": 100,
-                    "max_depth": None,
-                    "min_samples_split": 2,
-                    "min_samples_leaf": 1
+                    "n_estimators": [100],
+                    "max_depth": [None],
+                    "min_samples_split": [2],
+                    "min_samples_leaf": [1]
                 }
 
             }
@@ -98,11 +131,15 @@ class ModelTrainer:
             y_train_pred = best_model.predict(x_train)
 
             regression_train_metrics = get_Regression_score(y_true=y_train, y_pred=y_train_pred)
+            # track mlflow
+            self.track_mlflow(best_model, regression_train_metrics)
             logging.info(f"train metrics are {regression_train_metrics}")
 
             y_test_pred = best_model.predict(x_test)
             regression_test_metrics = get_Regression_score(y_true=y_test, y_pred=y_test_pred)
-
+            # track mlflow
+            self.track_mlflow(best_model, regression_test_metrics)
+            logging.info(f"test metrics are {regression_test_metrics}")
 
             # for new testing data, 
             preprocessor = load_object(file_path= self.data_transformation_artifact.transformed_object_file_path)
